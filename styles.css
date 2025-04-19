@@ -1,0 +1,138 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Conveyor Belt Animation */
+#conveyor-belt {
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    animation: scroll-conveyor 10s linear infinite;
+}
+
+@keyframes scroll-conveyor {
+    from { background-position: 0 0; }
+    to { background-position: -100px 0; }
+}
+
+/* Item Animation */
+.game-item {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: grab;
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+.game-item.dragging {
+    transform: scale(1.1);
+    opacity: 0.8;
+    cursor: grabbing;
+    z-index: 20;
+}
+
+/* Bin Highlight Effect */
+.bin.highlight {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Power-up Styles */
+.power-up {
+    position: relative;
+    overflow: hidden;
+}
+
+.power-up:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.power-up.ready {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+    .game-item {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    #conveyor-container {
+        height: 150px !important;
+    }
+    
+    .bin {
+        height: 100px !important;
+    }
+}
+
+/* Touch Feedback */
+.touch-feedback {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: touch-ripple 0.6s ease-out;
+    z-index: 100;
+}
+
+@keyframes touch-ripple {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+}
+
+/* Item Movement Animation */
+@keyframes move-right {
+    from { left: -60px; }
+    to { left: calc(100% + 60px); }
+}
+
+/* Correct/Incorrect Feedback */
+.feedback-text {
+    position: absolute;
+    font-weight: bold;
+    animation: fade-up 1s forwards;
+    pointer-events: none;
+}
+
+.feedback-correct {
+    color: #10B981;
+}
+
+.feedback-incorrect {
+    color: #EF4444;
+}
+
+@keyframes fade-up {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Power-up Animation */
+.power-up-active {
+    animation: power-up-glow 2s infinite;
+}
+
+@keyframes power-up-glow {
+    0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+}

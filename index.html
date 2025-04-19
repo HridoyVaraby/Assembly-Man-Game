@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assembly Line Man</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- Start Screen -->
+    <div id="start-screen" class="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center z-50">
+        <h1 class="text-4xl font-bold mb-8 text-center">Assembly Line Man</h1>
+        <div class="mb-8 text-center">
+            <p class="mb-4">Sort items into the correct bins before they reach the end!</p>
+            <p class="mb-2">🍎 Fruits → Fruit Bin</p>
+            <p class="mb-2">📱 Tech → Tech Bin</p>
+            <p class="mb-2">⚠️ Defective → Reject Bin</p>
+        </div>
+        <div class="flex flex-col space-y-4">
+            <button id="start-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl transition-colors">
+                Start Game
+            </button>
+            <button id="settings-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center z-50 hidden">
+        <h2 class="text-3xl font-bold mb-8">Settings</h2>
+        <div class="w-full max-w-md space-y-6 mb-8">
+            <div>
+                <label for="difficulty" class="block mb-2">Difficulty:</label>
+                <select id="difficulty" class="w-full bg-gray-800 text-white p-2 rounded-lg">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            <div>
+                <label for="sound-toggle" class="block mb-2">Sound Effects:</label>
+                <div class="flex items-center">
+                    <input type="checkbox" id="sound-toggle" class="mr-2" checked>
+                    <span id="sound-status">On</span>
+                </div>
+            </div>
+        </div>
+        <button id="settings-back" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+            Back
+        </button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex flex-col items-center justify-center z-50 hidden">
+        <h2 class="text-3xl font-bold mb-4">Game Over</h2>
+        <p class="text-xl mb-2">Final Score: <span id="final-score">0</span></p>
+        <p class="mb-8">Nice try! Can you do better?</p>
+        <div class="flex space-x-4">
+            <button id="restart-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                Play Again
+            </button>
+            <button id="main-menu-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                Main Menu
+            </button>
+        </div>
+    </div>
+
+    <!-- Pause Button -->
+    <button id="pause-button" class="fixed top-4 right-4 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-colors z-40 hidden">
+        Pause
+    </button>
+
+    <!-- Pause Screen -->
+    <div id="pause-screen" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex flex-col items-center justify-center z-50 hidden">
+        <h2 class="text-3xl font-bold mb-8">Game Paused</h2>
+        <div class="flex flex-col space-y-4">
+            <button id="resume-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                Resume
+            </button>
+            <button id="pause-main-menu" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                Main Menu
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container" class="w-full max-w-4xl mx-auto hidden">
+        <!-- HUD (Heads-Up Display) -->
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-xl font-bold">Score: <span id="score">0</span></div>
+            <div class="flex items-center">
+                <span class="mr-2">Lives:</span>
+                <div id="lives" class="flex">
+                    <div class="heart text-red-500 text-2xl mx-1">❤️</div>
+                    <div class="heart text-red-500 text-2xl mx-1">❤️</div>
+                    <div class="heart text-red-500 text-2xl mx-1">❤️</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Power-ups -->
+        <div class="flex justify-center mb-4 space-x-4">
+            <button id="slow-power" class="power-up bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg transition-colors" disabled>
+                🐢 Slow
+            </button>
+            <button id="auto-sort-power" class="power-up bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg transition-colors" disabled>
+                🔄 Auto-Sort
+            </button>
+            <button id="bonus-power" class="power-up bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded-lg transition-colors" disabled>
+                ⭐ Bonus
+            </button>
+        </div>
+
+        <!-- Conveyor Belt -->
+        <div id="conveyor-container" class="relative bg-gray-800 rounded-lg overflow-hidden mb-4" style="height: 180px;">
+            <div id="conveyor-belt" class="absolute inset-0 bg-repeat-x" style="background-image: url('./assets/conveyor.svg');"></div>
+            <div id="items-container" class="absolute inset-0 pointer-events-none"></div>
+        </div>
+
+        <!-- Bins -->
+        <div class="grid grid-cols-3 gap-4">
+            <div id="fruit-bin" class="bin bg-green-800 rounded-lg p-4 h-32 flex flex-col items-center justify-center border-2 border-dashed border-green-600" data-type="fruit">
+                <div class="text-3xl mb-2">🍎</div>
+                <div class="text-center font-bold">Fruit</div>
+            </div>
+            <div id="tech-bin" class="bin bg-blue-800 rounded-lg p-4 h-32 flex flex-col items-center justify-center border-2 border-dashed border-blue-600" data-type="tech">
+                <div class="text-3xl mb-2">📱</div>
+                <div class="text-center font-bold">Tech</div>
+            </div>
+            <div id="reject-bin" class="bin bg-red-800 rounded-lg p-4 h-32 flex flex-col items-center justify-center border-2 border-dashed border-red-600" data-type="defective">
+                <div class="text-3xl mb-2">⚠️</div>
+                <div class="text-center font-bold">Reject</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./script.js"></script>
+</body>
+</html>
